@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <meta
+      name="description"
+      content="Snake Game - A classic snake game developed with PixiJS and TailwindCSS"
+    />
+    <meta
+      name="keywords"
+      content="snake, game, pixi, javascript, tailwindcss"
+    />
+    <title>Snake Game</title>
+  </head>
+  <body>
+    <div id="app" class="game-container">
+      <!-- Header -->
+      <header class="text-center mb-8">
+        <h1 class="text-4xl md:text-6xl font-bold text-glow mb-4">
+          Snake Game
+        </h1>
+        <div
+          class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4"
+        >
+          <div class="score-display">Score: <span id="score">0</span></div>
+          <div class="score-display">
+            High Score: <span id="highScore">0</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Game Canvas Container -->
+      <main class="flex flex-col items-center">
+        <div id="gameContainer" class="relative mb-6"></div>
+
+        <!-- Game Controls -->
+        <div class="flex flex-col items-center gap-4">
+          <div class="flex gap-4">
+            <button id="startBtn" class="game-button">Start Game</button>
+            <button id="pauseBtn" class="game-button" disabled>
+              Pause Game
+            </button>
+            <button id="resetBtn" class="game-button">Reset Game</button>
+          </div>
+
+          <!-- Mobile Controls -->
+          <div class="mobile-controls md:hidden">
+            <div></div>
+            <button id="upBtn" class="control-button">↑</button>
+            <div></div>
+            <button id="leftBtn" class="control-button">←</button>
+            <div></div>
+            <button id="rightBtn" class="control-button">→</button>
+            <div></div>
+            <button id="downBtn" class="control-button">↓</button>
+            <div></div>
+          </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="text-center mt-8 max-w-md">
+          <h3 class="text-lg font-bold mb-2">Instructions:</h3>
+          <p class="text-sm text-gray-300">
+            <span class="hidden md:inline"
+              >Use arrow keys or WASD to move the snake.</span
+            >
+            <span class="md:hidden"
+              >Use direction buttons to move the snake.</span
+            >
+            Eat the red food to grow and score points. Do not collide with the
+            walls or yourself!
+          </p>
+        </div>
+      </main>
+    </div>
+
+    <!-- Game Over Modal -->
+    <div id="gameOverModal" class="game-over-overlay hidden">
+      <div class="bg-gray-800 p-8 rounded-lg text-center max-w-sm mx-4">
+        <h2 class="text-3xl font-bold text-red-500 mb-4">¡Game Over!</h2>
+        <p class="text-xl mb-2">
+          Final Score:
+          <span id="finalScore" class="text-snake-green font-bold">0</span>
+        </p>
+        <p class="text-lg mb-6" id="newHighScore" style="display: none">
+          New Record!
+        </p>
+        <button id="playAgainBtn" class="game-button w-full">Play Again</button>
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

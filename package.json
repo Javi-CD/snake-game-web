@@ -1,0 +1,36 @@
+{
+  "name": "game-snake-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepare": "husky",
+    "lint": "eslint . --ext js",
+    "lint:fix": "eslint . --ext js --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "echo 'No TypeScript in this project'",
+    "build:gh-pages": "vite build --base=/game-snake-web/"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/js": "^9.31.0",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.31.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.3",
+    "husky": "^9.1.7",
+    "postcss": "^8.5.6",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^4.1.11",
+    "vite": "^7.0.4"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.1.11",
+    "pixi.js": "^8.11.0"
+  }
+}

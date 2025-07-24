@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #0f172a;
+  color: white;
+  font-family: 'Orbitron', monospace;
+}
+
+/* Game components */
+.game-button {
+  background-color: #4ade80;
+  color: white;
+  font-weight: bold;
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  transform: scale(1);
+}
+
+.game-button:hover {
+  background-color: #166534;
+  transform: scale(1.05);
+}
+
+.game-button:active {
+  transform: scale(0.95);
+}
+
+.game-button:disabled {
+  background-color: #6b7280;
+  cursor: not-allowed;
+  transform: scale(1);
+}
+
+.score-display {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #4ade80;
+}
+
+.game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.mobile-controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  width: 192px;
+  margin: 0 auto;
+}
+
+.control-button {
+  background-color: #374151;
+  color: white;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 1.25rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.control-button:hover {
+  background-color: #4b5563;
+}
+
+.control-button:active {
+  background-color: #6b7280;
+}
+
+.text-glow {
+  text-shadow: 0 0 10px currentColor;
+}
+
+.game-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
