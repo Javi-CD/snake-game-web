@@ -99,7 +99,7 @@ export function updateButtonStates(gameState) {
   if (!elements.startBtn || !elements.pauseBtn || !elements.resetBtn) return;
 
   switch (gameState) {
-    case 'RUNNING':
+    case 'PLAYING':
       elements.startBtn.disabled = true;
       elements.pauseBtn.disabled = false;
       elements.pauseBtn.textContent = 'Pause';
@@ -113,12 +113,12 @@ export function updateButtonStates(gameState) {
       elements.resetBtn.disabled = false;
       break;
 
-    case 'STOPPED':
+    case 'IDLE':
     case 'GAME_OVER':
       elements.startBtn.disabled = false;
       elements.pauseBtn.disabled = true;
       elements.pauseBtn.textContent = 'Pause';
-      elements.resetBtn.disabled = gameState === 'STOPPED';
+      elements.resetBtn.disabled = gameState === 'IDLE';
       break;
   }
 }

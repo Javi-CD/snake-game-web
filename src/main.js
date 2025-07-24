@@ -35,7 +35,7 @@ function setupGame() {
         gameEngine.togglePause();
         break;
       case 'start_game':
-        if (gameEngine.getGameState() === GAME_STATES.STOPPED) {
+        if (gameEngine.getGameState() === GAME_STATES.IDLE) {
           gameEngine.startGame();
         }
         break;
@@ -85,7 +85,7 @@ function handleGameOver(finalScore, highScore, isNewRecord) {
  */
 function handleGameStateChange(newState) {
   switch (newState) {
-    case GAME_STATES.RUNNING:
+    case GAME_STATES.PLAYING:
       elements.startBtn.disabled = true;
       elements.pauseBtn.disabled = false;
       elements.pauseBtn.textContent = 'Pause';
@@ -96,7 +96,7 @@ function handleGameStateChange(newState) {
       elements.pauseBtn.textContent = 'Resume';
       break;
 
-    case GAME_STATES.STOPPED:
+    case GAME_STATES.IDLE:
       elements.startBtn.disabled = false;
       elements.pauseBtn.disabled = true;
       elements.pauseBtn.textContent = 'Pause';
@@ -125,7 +125,7 @@ function initializeUI() {
   updateScoreDisplay(0, initialHighScore);
 
   // Set initial button states
-  handleGameStateChange(GAME_STATES.STOPPED);
+  handleGameStateChange(GAME_STATES.IDLE);
 }
 
 /**

@@ -14,12 +14,12 @@ export class GameEngine {
     this.ctx = ctx;
     this.snake = new Snake();
     this.food = new Food();
-    this.gameState = GAME_STATES.STOPPED;
+    this.gameState = GAME_STATES.IDLE;
     this.score = 0;
     this.highScore = this.loadHighScore();
     this.gameLoopId = null;
     this.lastUpdateTime = 0;
-    this.updateInterval = GAME_CONFIG.INITIAL_SPEED;
+    this.updateInterval = GAME_CONFIG.GAME_SPEED;
 
     // Callbacks
     this.onScoreUpdate = null;
@@ -58,11 +58,21 @@ export class GameEngine {
    * Start the game
    */
   startGame() {
-    if (this.gameState === GAME_STATES.STOPPED) {
-      this.resetGame();
+    if (
+      this.gameState === GAME_STATES.IDLE ||
+      this.gameState === GAME_STATES.GAME_OVER
+    ) {
+      this.score = 0;
+      this.updateInterval = GAME_CONFIG.GAME_SPEED;
+      this.snake.reset();
+      this.food.generateNewPosition(this.snake.getSegments());
+
+      if (this.onScoreUpdate) {
+        this.onScoreUpdate(this.score, this.highScore);
+      }
     }
 
-    this.gameState = GAME_STATES.RUNNING;
+    this.gameState = GAME_STATES.PLAYING;
     this.lastUpdateTime = performance.now();
 
     if (this.onGameStateChange) {
@@ -76,7 +86,7 @@ export class GameEngine {
    * Pause the game
    */
   pauseGame() {
-    if (this.gameState === GAME_STATES.RUNNING) {
+    if (this.gameState === GAME_STATES.PLAYING) {
       this.gameState = GAME_STATES.PAUSED;
       if (this.gameLoopId) {
         cancelAnimationFrame(this.gameLoopId);
@@ -94,7 +104,7 @@ export class GameEngine {
    */
   resumeGame() {
     if (this.gameState === GAME_STATES.PAUSED) {
-      this.gameState = GAME_STATES.RUNNING;
+      this.gameState = GAME_STATES.PLAYING;
       this.lastUpdateTime = performance.now();
 
       if (this.onGameStateChange) {
@@ -109,7 +119,7 @@ export class GameEngine {
    * Toggle pause state
    */
   togglePause() {
-    if (this.gameState === GAME_STATES.RUNNING) {
+    if (this.gameState === GAME_STATES.PLAYING) {
       this.pauseGame();
     } else if (this.gameState === GAME_STATES.PAUSED) {
       this.resumeGame();
@@ -120,9 +130,9 @@ export class GameEngine {
    * Reset the game to initial state
    */
   resetGame() {
-    this.gameState = GAME_STATES.STOPPED;
+    this.gameState = GAME_STATES.IDLE;
     this.score = 0;
-    this.updateInterval = GAME_CONFIG.INITIAL_SPEED;
+    this.updateInterval = GAME_CONFIG.GAME_SPEED;
 
     this.snake.reset();
     this.food.generateNewPosition(this.snake.getSegments());
@@ -148,7 +158,7 @@ export class GameEngine {
    * @param {Object} direction - New direction object
    */
   changeDirection(direction) {
-    if (this.gameState === GAME_STATES.RUNNING) {
+    if (this.gameState === GAME_STATES.PLAYING) {
       this.snake.setDirection(direction);
     }
   }
@@ -166,7 +176,7 @@ export class GameEngine {
 
     this.render();
 
-    if (this.gameState === GAME_STATES.RUNNING) {
+    if (this.gameState === GAME_STATES.PLAYING) {
       this.gameLoopId = requestAnimationFrame(() => this.gameLoop());
     }
   }
@@ -175,7 +185,7 @@ export class GameEngine {
    * Update game logic
    */
   update() {
-    if (this.gameState !== GAME_STATES.RUNNING) return;
+    if (this.gameState !== GAME_STATES.PLAYING) return;
 
     // Move snake
     this.snake.move();
