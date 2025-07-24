@@ -13,7 +13,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "type-check": "echo 'No TypeScript in this project'",
-    "build:gh-pages": "NODE_ENV=production vite build"
+    "build:gh-pages": "vite build --mode production"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",

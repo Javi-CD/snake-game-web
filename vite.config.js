@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   plugins: [tailwindcss()],
-  base: process.env.NODE_ENV === 'production' ? '/snake-game-web/' : '/',
-});
+  base: mode === 'production' ? '/snake-game-web/' : '/',
+}));
