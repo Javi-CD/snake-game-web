@@ -63,6 +63,10 @@ body {
   z-index: 50;
 }
 
+.game-over-overlay.hidden {
+  display: none;
+}
+
 .mobile-controls {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -102,4 +106,42 @@ body {
   align-items: center;
   justify-content: center;
   padding: 16px;
+}
+
+/* Game Canvas Styles */
+.game-canvas-container {
+  border: 3px solid #4ade80;
+  border-radius: 12px;
+  background-color: #1e293b;
+  padding: 8px;
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.3);
+}
+
+.game-canvas {
+  display: block;
+  background-color: #0f172a;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  aspect-ratio: 1;
+}
+
+/* Responsive canvas sizes */
+@media (max-width: 640px) {
+  .game-canvas {
+    max-width: 350px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .game-canvas {
+    max-width: 450px;
+  }
+}
+
+@media (min-width: 769px) {
+  .game-canvas {
+    max-width: 600px;
+  }
 }
