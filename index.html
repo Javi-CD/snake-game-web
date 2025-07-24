@@ -36,7 +36,9 @@
 
       <!-- Game Canvas Container -->
       <main class="flex flex-col items-center">
-        <div id="gameContainer" class="relative mb-6"></div>
+        <div id="gameContainer" class="relative mb-6 game-canvas-container">
+          <canvas id="gameCanvas" class="game-canvas"></canvas>
+        </div>
 
         <!-- Game Controls -->
         <div class="flex flex-col items-center gap-4">
@@ -51,13 +53,13 @@
           <!-- Mobile Controls -->
           <div class="mobile-controls md:hidden">
             <div></div>
-            <button id="upBtn" class="control-button">↑</button>
+            <button id="up-btn" class="control-button">↑</button>
             <div></div>
-            <button id="leftBtn" class="control-button">←</button>
+            <button id="left-btn" class="control-button">←</button>
             <div></div>
-            <button id="rightBtn" class="control-button">→</button>
+            <button id="right-btn" class="control-button">→</button>
             <div></div>
-            <button id="downBtn" class="control-button">↓</button>
+            <button id="down-btn" class="control-button">↓</button>
             <div></div>
           </div>
         </div>
@@ -82,13 +84,17 @@
     <!-- Game Over Modal -->
     <div id="gameOverModal" class="game-over-overlay hidden">
       <div class="bg-gray-800 p-8 rounded-lg text-center max-w-sm mx-4">
-        <h2 class="text-3xl font-bold text-red-500 mb-4">¡Game Over!</h2>
+        <h2 class="text-3xl font-bold text-red-500 mb-4">Game Over!</h2>
         <p class="text-xl mb-2">
           Final Score:
           <span id="finalScore" class="text-snake-green font-bold">0</span>
         </p>
-        <p class="text-lg mb-6" id="newHighScore" style="display: none">
-          New Record!
+        <p class="text-lg mb-2">
+          Best Score:
+          <span id="bestScore" class="text-yellow-400 font-bold">0</span>
+        </p>
+        <p class="text-lg mb-6 new-record" style="display: none">
+          New High Score!
         </p>
         <button id="playAgainBtn" class="game-button w-full">Play Again</button>
       </div>
