@@ -1,89 +1,174 @@
 import './style.css';
-import { GAME_CONFIG, GAME_STATES } from './config/gameConfig.js';
+import { GAME_STATES } from './config/gameConfig.js';
 import { initializeCanvas } from './utils/canvasUtils.js';
-import {
-  getAllElements,
-  updateScore,
-  updateHighScore,
-  hideGameOverModal,
-  toggleButtonStates,
-} from './utils/domUtils.js';
+import { elements } from './utils/domUtils.js';
+import { GameEngine } from './game/GameEngine.js';
+import { InputHandler } from './input/InputHandler.js';
 
-// Get all DOM elements
-const elements = getAllElements();
-let ctx = null;
+// Game instances
+let gameEngine = null;
+let inputHandler = null;
 
-// Initialize canvas and get context
-function setupCanvas() {
-  if (elements.canvas) {
-    ctx = initializeCanvas(elements.canvas);
+/**
+ * Setup canvas and initialize game engine
+ */
+function setupGame() {
+  const { canvas, ctx } = initializeCanvas();
+
+  // Initialize game engine
+  gameEngine = new GameEngine(canvas, ctx);
+
+  // Setup callbacks
+  gameEngine.setScoreUpdateCallback(updateScoreDisplay);
+  gameEngine.setGameOverCallback(handleGameOver);
+  gameEngine.setGameStateChangeCallback(handleGameStateChange);
+
+  // Initialize input handler
+  inputHandler = new InputHandler();
+  inputHandler.setDirectionChangeCallback(direction => {
+    gameEngine.changeDirection(direction);
+  });
+
+  inputHandler.setGameActionCallback(action => {
+    switch (action) {
+      case 'toggle_pause':
+        gameEngine.togglePause();
+        break;
+      case 'start_game':
+        if (gameEngine.getGameState() === GAME_STATES.STOPPED) {
+          gameEngine.startGame();
+        }
+        break;
+      case 'reset_game':
+        gameEngine.resetGame();
+        break;
+    }
+  });
+
+  return { canvas, ctx };
+}
+
+/**
+ * Update score display in UI
+ * @param {number} currentScore - Current game score
+ * @param {number} highScore - High score
+ */
+function updateScoreDisplay(currentScore, highScore) {
+  elements.currentScore.textContent = currentScore;
+  elements.highScore.textContent = highScore;
+  elements.bestScore.textContent = highScore;
+}
+
+/**
+ * Handle game over event
+ * @param {number} finalScore - Final score
+ * @param {number} highScore - High score
+ * @param {boolean} isNewRecord - Whether this is a new high score
+ */
+function handleGameOver(finalScore, highScore, isNewRecord) {
+  elements.finalScore.textContent = finalScore;
+  elements.bestScore.textContent = highScore;
+
+  // Show/hide new record message
+  const newRecordElement = elements.gameOverModal.querySelector('.new-record');
+  if (newRecordElement) {
+    newRecordElement.style.display = isNewRecord ? 'block' : 'none';
+  }
+
+  // Show game over modal
+  elements.gameOverModal.classList.remove('hidden');
+}
+
+/**
+ * Handle game state changes
+ * @param {string} newState - New game state
+ */
+function handleGameStateChange(newState) {
+  switch (newState) {
+    case GAME_STATES.RUNNING:
+      elements.startBtn.disabled = true;
+      elements.pauseBtn.disabled = false;
+      elements.pauseBtn.textContent = 'Pause';
+      elements.resetBtn.disabled = false;
+      break;
+
+    case GAME_STATES.PAUSED:
+      elements.pauseBtn.textContent = 'Resume';
+      break;
+
+    case GAME_STATES.STOPPED:
+      elements.startBtn.disabled = false;
+      elements.pauseBtn.disabled = true;
+      elements.pauseBtn.textContent = 'Pause';
+      elements.resetBtn.disabled = false;
+      elements.gameOverModal.classList.add('hidden');
+      break;
+
+    case GAME_STATES.GAME_OVER:
+      elements.startBtn.disabled = false;
+      elements.pauseBtn.disabled = true;
+      elements.pauseBtn.textContent = 'Pause';
+      elements.resetBtn.disabled = false;
+      break;
   }
 }
 
-// Game state variables
-let gameState = GAME_STATES.IDLE;
-let score = 0;
-const highScore = localStorage.getItem('snakeHighScore') || 0;
-
-// Initialize UI
+/**
+ * Initialize UI elements and set initial states
+ */
 function initializeUI() {
-  // Update score displays
-  updateScore(elements.score, score);
-  updateHighScore(elements.highScore, highScore);
+  // Hide game over modal initially
+  elements.gameOverModal.classList.add('hidden');
 
-  // Hide game over modal
-  hideGameOverModal(elements.gameOverModal);
+  // Set initial score displays
+  const initialHighScore = gameEngine ? gameEngine.getHighScore() : 0;
+  updateScoreDisplay(0, initialHighScore);
 
   // Set initial button states
-  toggleButtonStates(elements.startBtn, elements.pauseBtn, false);
+  handleGameStateChange(GAME_STATES.STOPPED);
 }
 
-// Event listeners for game controls
+/**
+ * Setup event listeners for game controls
+ */
 function setupEventListeners() {
-  if (elements.startBtn) {
-    elements.startBtn.addEventListener('click', () => {
-      // Start game - Placeholder
-      gameState = GAME_STATES.PLAYING;
-      toggleButtonStates(elements.startBtn, elements.pauseBtn, true);
-    });
-  }
+  elements.startBtn.addEventListener('click', () => {
+    if (gameEngine) {
+      gameEngine.startGame();
+    }
+  });
 
-  if (elements.pauseBtn) {
-    elements.pauseBtn.addEventListener('click', () => {
-      // Pause game - Placeholder
-      gameState = GAME_STATES.PAUSED;
-      toggleButtonStates(elements.startBtn, elements.pauseBtn, false);
-    });
-  }
+  elements.pauseBtn.addEventListener('click', () => {
+    if (gameEngine) {
+      gameEngine.togglePause();
+    }
+  });
 
-  if (elements.resetBtn) {
-    elements.resetBtn.addEventListener('click', () => {
-      // Reset game - Placeholder
-      gameState = GAME_STATES.IDLE;
-      score = 0;
-      updateScore(elements.score, score);
-      hideGameOverModal(elements.gameOverModal);
-      toggleButtonStates(elements.startBtn, elements.pauseBtn, false);
-    });
-  }
+  elements.resetBtn.addEventListener('click', () => {
+    if (gameEngine) {
+      gameEngine.resetGame();
+    }
+  });
 
-  if (elements.playAgainBtn) {
-    elements.playAgainBtn.addEventListener('click', () => {
-      // Play again - Placeholder
-      gameState = GAME_STATES.IDLE;
-      score = 0;
-      updateScore(elements.score, score);
-      hideGameOverModal(elements.gameOverModal);
-      toggleButtonStates(elements.startBtn, elements.pauseBtn, false);
-    });
-  }
+  elements.newGameBtn.addEventListener('click', () => {
+    if (gameEngine) {
+      elements.gameOverModal.classList.add('hidden');
+      gameEngine.resetGame();
+      gameEngine.startGame();
+    }
+  });
 }
 
-// Initialize the game
+/**
+ * Initialize the complete game
+ */
 function initializeGame() {
-  setupCanvas();
+  setupGame();
   initializeUI();
   setupEventListeners();
+
+  // Snake game fully initialized
+  // Controls: Arrow keys or WASD to move, Space to pause, Enter to start, Escape to reset
 }
 
 // Start the application

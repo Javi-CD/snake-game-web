@@ -1,22 +1,22 @@
 /**
  * DOM element selectors and utilities
  */
-export const DOM_ELEMENTS = {
+const DOM_SELECTORS = {
   canvas: '#gameCanvas',
-  score: '#score',
+  currentScore: '#score',
   highScore: '#highScore',
   startBtn: '#startBtn',
   pauseBtn: '#pauseBtn',
   resetBtn: '#resetBtn',
   gameOverModal: '#gameOverModal',
   finalScore: '#finalScore',
-  newHighScore: '#newHighScore',
-  playAgainBtn: '#playAgainBtn',
+  bestScore: '#bestScore',
+  newGameBtn: '#playAgainBtn',
   // Mobile controls
-  upBtn: '#upBtn',
-  downBtn: '#downBtn',
-  leftBtn: '#leftBtn',
-  rightBtn: '#rightBtn',
+  upBtn: '#up-btn',
+  downBtn: '#down-btn',
+  leftBtn: '#left-btn',
+  rightBtn: '#right-btn',
 };
 
 /**
@@ -24,96 +24,101 @@ export const DOM_ELEMENTS = {
  * @param {string} selector - CSS selector
  * @returns {HTMLElement|null} The DOM element
  */
-export function getElement(selector) {
+function getElement(selector) {
   return document.querySelector(selector);
 }
 
 /**
- * Get all DOM elements needed for the game
- * @returns {Object} Object containing all DOM elements
+ * All DOM elements needed for the game
  */
-export function getAllElements() {
-  const elements = {};
-
-  for (const [key, selector] of Object.entries(DOM_ELEMENTS)) {
-    elements[key] = getElement(selector);
-  }
-
-  return elements;
-}
+export const elements = Object.entries(DOM_SELECTORS).reduce(
+  (acc, [key, selector]) => {
+    acc[key] = getElement(selector);
+    return acc;
+  },
+  {}
+);
 
 /**
  * Update score display
- * @param {HTMLElement} scoreElement - Score display element
  * @param {number} score - Current score
  */
-export function updateScore(scoreElement, score) {
-  if (scoreElement) {
-    scoreElement.textContent = score;
+export function updateScore(score) {
+  if (elements.currentScore) {
+    elements.currentScore.textContent = score;
   }
 }
 
 /**
  * Update high score display
- * @param {HTMLElement} highScoreElement - High score display element
  * @param {number} highScore - High score value
  */
-export function updateHighScore(highScoreElement, highScore) {
-  if (highScoreElement) {
-    highScoreElement.textContent = highScore;
+export function updateHighScore(highScore) {
+  if (elements.highScore) {
+    elements.highScore.textContent = highScore;
+  }
+  if (elements.bestScore) {
+    elements.bestScore.textContent = highScore;
   }
 }
 
 /**
  * Show game over modal
- * @param {HTMLElement} modal - Game over modal element
- * @param {HTMLElement} finalScoreElement - Final score display element
- * @param {HTMLElement} newHighScoreElement - New high score message element
  * @param {number} finalScore - Final score
  * @param {boolean} isNewHighScore - Whether this is a new high score
  */
-export function showGameOverModal(
-  modal,
-  finalScoreElement,
-  newHighScoreElement,
-  finalScore,
-  isNewHighScore
-) {
-  if (modal) {
-    modal.classList.remove('hidden');
+export function showGameOverModal(finalScore, isNewHighScore) {
+  if (elements.gameOverModal) {
+    elements.gameOverModal.classList.remove('hidden');
   }
 
-  if (finalScoreElement) {
-    finalScoreElement.textContent = finalScore;
+  if (elements.finalScore) {
+    elements.finalScore.textContent = finalScore;
   }
 
-  if (newHighScoreElement) {
-    newHighScoreElement.style.display = isNewHighScore ? 'block' : 'none';
+  const newRecordElement = elements.gameOverModal.querySelector('.new-record');
+  if (newRecordElement) {
+    newRecordElement.style.display = isNewHighScore ? 'block' : 'none';
   }
 }
 
 /**
  * Hide game over modal
- * @param {HTMLElement} modal - Game over modal element
  */
-export function hideGameOverModal(modal) {
-  if (modal) {
-    modal.classList.add('hidden');
+export function hideGameOverModal() {
+  if (elements.gameOverModal) {
+    elements.gameOverModal.classList.add('hidden');
   }
 }
 
 /**
- * Toggle button states
- * @param {HTMLElement} startBtn - Start button element
- * @param {HTMLElement} pauseBtn - Pause button element
- * @param {boolean} isPlaying - Whether game is currently playing
+ * Update button states based on game state
+ * @param {string} gameState - Current game state
  */
-export function toggleButtonStates(startBtn, pauseBtn, isPlaying) {
-  if (startBtn) {
-    startBtn.disabled = isPlaying;
-  }
+export function updateButtonStates(gameState) {
+  if (!elements.startBtn || !elements.pauseBtn || !elements.resetBtn) return;
 
-  if (pauseBtn) {
-    pauseBtn.disabled = !isPlaying;
+  switch (gameState) {
+    case 'RUNNING':
+      elements.startBtn.disabled = true;
+      elements.pauseBtn.disabled = false;
+      elements.pauseBtn.textContent = 'Pause';
+      elements.resetBtn.disabled = false;
+      break;
+
+    case 'PAUSED':
+      elements.startBtn.disabled = true;
+      elements.pauseBtn.disabled = false;
+      elements.pauseBtn.textContent = 'Resume';
+      elements.resetBtn.disabled = false;
+      break;
+
+    case 'STOPPED':
+    case 'GAME_OVER':
+      elements.startBtn.disabled = false;
+      elements.pauseBtn.disabled = true;
+      elements.pauseBtn.textContent = 'Pause';
+      elements.resetBtn.disabled = gameState === 'STOPPED';
+      break;
   }
 }

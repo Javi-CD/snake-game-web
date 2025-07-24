@@ -2,10 +2,14 @@ import { GAME_CONFIG, COLORS } from '../config/gameConfig.js';
 
 /**
  * Initialize canvas with proper dimensions and context
- * @param {HTMLCanvasElement} canvas - The canvas element
- * @returns {CanvasRenderingContext2D} The 2D rendering context
+ * @returns {Object} Object containing canvas and context
  */
-export function initializeCanvas(canvas) {
+export function initializeCanvas() {
+  const canvas = document.getElementById('gameCanvas');
+  if (!canvas) {
+    throw new Error('Canvas element not found');
+  }
+
   const ctx = canvas.getContext('2d');
 
   // Set canvas dimensions
@@ -15,7 +19,7 @@ export function initializeCanvas(canvas) {
   // Draw initial grid for development
   drawGrid(ctx);
 
-  return ctx;
+  return { canvas, ctx };
 }
 
 /**
@@ -46,25 +50,24 @@ export function drawGrid(ctx) {
 /**
  * Clear the entire canvas
  * @param {CanvasRenderingContext2D} ctx - The canvas context
+ * @param {number} width - Canvas width
+ * @param {number} height - Canvas height
  */
-export function clearCanvas(ctx) {
+export function clearCanvas(ctx, width, height) {
   ctx.fillStyle = COLORS.BACKGROUND;
-  ctx.fillRect(0, 0, GAME_CONFIG.CANVAS_SIZE, GAME_CONFIG.CANVAS_SIZE);
+  ctx.fillRect(0, 0, width, height);
 }
 
 /**
  * Draw a rectangle on the canvas
  * @param {CanvasRenderingContext2D} ctx - The canvas context
- * @param {number} x - X coordinate in grid units
- * @param {number} y - Y coordinate in grid units
+ * @param {number} x - X coordinate in pixels
+ * @param {number} y - Y coordinate in pixels
+ * @param {number} width - Width in pixels
+ * @param {number} height - Height in pixels
  * @param {string} color - Fill color
  */
-export function drawRect(ctx, x, y, color) {
+export function drawRect(ctx, x, y, width, height, color) {
   ctx.fillStyle = color;
-  ctx.fillRect(
-    x * GAME_CONFIG.GRID_SIZE,
-    y * GAME_CONFIG.GRID_SIZE,
-    GAME_CONFIG.GRID_SIZE,
-    GAME_CONFIG.GRID_SIZE
-  );
+  ctx.fillRect(x, y, width, height);
 }
